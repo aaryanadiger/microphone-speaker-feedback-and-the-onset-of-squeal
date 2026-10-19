@@ -1,0 +1,16 @@
+# Reports and submission documents
+*.docx
+*.doc
+*.pdf
+*.zip
+~$*
+
+# Regenerated MATLAB files
+results/*.fig
+results/*.mat
+results/matlab_execution.txt
+*.asv
+
+# Local configuration
+.DS_Store
+Thumbs.db
