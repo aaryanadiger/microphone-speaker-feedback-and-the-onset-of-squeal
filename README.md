@@ -44,7 +44,3 @@ Relative levels use `20*log10(amplitude ratio)`. At 2 seconds the example level 
 ## Scope
 
 The project follows elementary signals, LTI system interconnection, and Laplace analysis from the supplied course policy. The acoustic path and its numerical parameters are explicit modelling assumptions. It does not model propagation delay, room reflections, microphone distance, or amplifier clipping. Real hardware eventually limits the growth.
-
-## Project report
-
-[Download the final report](Acoustic_Feedback_Report.docx). Verified example graphs and numerical results are in [results](results/).
