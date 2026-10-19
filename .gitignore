@@ -14,3 +14,10 @@ results/matlab_execution.txt
 # Local configuration
 .DS_Store
 Thumbs.db
+
+!Acoustic_Feedback_Report.docx
+work/
+
+# Local supporting notes
+CODE_EXPLANATION.md
+RELEASE_NOTES.md

@@ -1,91 +1,50 @@
 # Microphone Speaker Feedback and the Onset of Squeal
 
-A MATLAB simulation of acoustic feedback that demonstrates how a small change in loop gain turns a fading tone into a growing squeal. The project connects Laplace transforms, pole locations, and stability to the microphone and loudspeaker feedback loop.
+This Signals and Systems mini project compares a fading tone below the feedback threshold with a growing squeal above it. It uses Laplace transforms, inverse Laplace transforms, and pole locations.
 
 ## Requirements
 
-- MATLAB R2026a or later
-- Base MATLAB only
+- MATLAB with Symbolic Math Toolbox and Control System Toolbox, matching the supplied Laplace laboratory example.
+- No microphone, recording, or audio hardware is required. The program does not play sound.
 
-No additional toolboxes or audio hardware are required. The simulation does not play audio.
+## Run and input
 
-## Run
+1. Open `acoustic_feedback.m` and click **Run**.
+2. In the Command Window, enter `0.98` at the below-threshold gain prompt and press Enter.
+3. Enter `1.02` at the above-threshold gain prompt and press Enter.
 
-1. Clone or download this repository.
-2. Open `acoustic_feedback.m` in MATLAB.
-3. Click **Run**.
-
-The script generates four figures and saves the plots, numerical summary, simulation data, and execution log in `results/`.
+The program accepts `0 < K1 < 1` and `1 < K2 < 1.1` to keep this demonstration near the threshold. These are demonstration input limits, not universal physical limits. Re-run the script to compare other gain pairs. The prompts take numbers, not audio files or microphone distances.
 
 ## Model
 
-The acoustic path is approximated by a single resonant bandpass mode with positive feedback:
+The assumed resonant path is `G(s) = b*s/(s^2 + b*s + w0^2)` with `b = 250` per second and `w0 = 2*pi*1000` rad/s. Positive feedback gives:
 
 ```text
-G(s) = 2*zeta*w0*s / (s^2 + 2*zeta*w0*s + w0^2)
-H(s) = G(s) / (1 - K*G(s))
+H(s) = G(s)/(1 - K*G(s))
+     = b*s/(s^2 + b*(1-K)*s + w0^2)
 ```
 
-The closed loop characteristic equation is:
+For the gains used here, set `r = -b*(1-K)/2` and `wd = sqrt(w0^2-r^2)`. The poles are `r +/- j*wd`. The free response from the chosen initial conditions is `y(t) = 0.001*exp(r*t)*cos(wd*t)`. Its peak amplitude envelope is `0.001*exp(r*t)`.
 
-```text
-s^2 + 2*zeta*w0*(1 - K)*s + w0^2 = 0
-```
+The waveform is the free response from a small initial disturbance; it is not the impulse response of H(s). Peak amplitude indicates the relative volume trend in arbitrary units, not measured sound pressure.
 
-The resonance is 1000 Hz, the open path damping ratio is 0.02, and the critical normalized feedback gain is `K = 1`.
+## Example results
 
-## Results
+| Gain | Pole real part | Envelope at 2 seconds | Behaviour |
+| --- | --- | --- | --- |
+| 0.98 | -2.5 per second | 0.00000673795 | Decays |
+| 1.02 | +2.5 per second | 0.148413159 | Grows |
 
-Each case starts with an amplitude of 0.001 arbitrary units and runs for two seconds at a sample rate of 48000 Hz.
+At `K = 1`, the poles lie on the imaginary axis. The free oscillation persists, but the system is not BIBO stable.
 
-| Feedback gain | Pole real part (1/s) | Final envelope | Relative level change | Behaviour |
-| --- | --- | --- | --- | --- |
-| 0.98 | -2.513274 | 0.000006561 | -43.6600 dB | Decays |
-| 1.00 | 0 | 0.001000000 | 0 dB | Constant free oscillation |
-| 1.02 | +2.513274 | 0.152406036 | +43.6600 dB | Grows |
+The program displays the transforms, four figures, the poles, and stability decisions. The four figures follow the original project layouts: three time responses, a two-panel volume comparison, a full and enlarged pole plot, and a pitch/resonance comparison. K = 1 is a fixed reference; it is not a third user input.
 
-The pole pair crosses the imaginary axis at `K = 1`. The oscillation frequency remains approximately 1000 Hz. At the threshold, the free response persists, but the system is not BIBO stable.
-
-### Time responses
-
-Below threshold the disturbance fades. Above threshold its envelope grows exponentially. The panels use different vertical scales.
-
-![Time responses for feedback gains below, at, and above the threshold](results/01_time_responses.png)
-
-### Volume comparison
-
-The amplitude envelopes show the opposite trends directly. The decibel plot measures change relative to the initial amplitude, not calibrated sound pressure level.
-
-![Amplitude envelopes and relative level changes over two seconds](results/02_volume_comparison.png)
-
-### Pole locations
-
-The stable poles lie in the left half plane. Increasing the gain through the threshold moves them into the right half plane.
-
-![Closed loop pole locations and an enlarged view of the stability boundary](results/03_pole_locations.png)
-
-### Squeal pitch
-
-The short waveform shows five cycles in five milliseconds. The loop magnitude peaks near the selected 1000 Hz acoustic mode.
-
-![Short waveform segment and loop magnitude near resonance](results/04_pitch_and_resonance.png)
-
-## Validation
-
-Executed in MATLAB R2026a Update 4. The script checks the characteristic polynomial residuals, verifies the stability signs, and compares the sampled state response with the analytical solution. The maximum normalized error was `3.92e-12`.
-
-## Files
-
-| File | Description |
-| --- | --- |
-| `acoustic_feedback.m` | Complete simulation and validation script |
-| `results/*.png` | MATLAB output plots |
-| `results/summary.csv` | Numerical results for all three gains |
-
-Running the script also creates editable `.fig` figures, `simulation_data.mat`, and `matlab_execution.txt` in `results/`.
+Relative levels use `20*log10(amplitude ratio)`. At 2 seconds the example level changes are -43.4294 dB and +43.4294 dB. These are changes from the initial amplitude, not calibrated sound pressure levels. The accompanying report contains the complete code, derivation, input instructions, constants, screenshots, results, and conclusions.
 
 ## Scope
 
-This is a linear single mode model of the onset of acoustic feedback. It does not include propagation delay, multiple room modes, or output saturation. Real hardware eventually clips instead of growing without limit.
+The project follows elementary signals, LTI system interconnection, and Laplace analysis from the supplied course policy. The acoustic path and its numerical parameters are explicit modelling assumptions. It does not model propagation delay, room reflections, microphone distance, or amplifier clipping. Real hardware eventually limits the growth.
 
-made with ❤️ by aarya
+## Project report
+
+[Download the final report](Acoustic_Feedback_Report.docx). Verified example graphs and numerical results are in [results](results/).
